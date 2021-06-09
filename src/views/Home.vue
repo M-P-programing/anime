@@ -1,56 +1,72 @@
 <template>
-  <div class="hello">
-    <h1>Hello</h1>
-    <p>
-      Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam quos
-      voluptas soluta cum laudantium velit unde laborum esse quis, aspernatur
-      deleniti recusandae, aliquid, reprehenderit dolorum ut culpa! Velit itaque
-      quasi aliquam quod. Sint expedita quisquam facere corporis eaque ducimus,
-      id delectus cum fugiat perferendis, nisi possimus? Animi optio sunt eum,
-      nostrum accusantium ratione id eaque? Est quaerat ut expedita, nemo aut a
-      facere dolor, explicabo minima sit eveniet, soluta omnis laboriosam
-      corporis itaque porro perferendis id officiis atque dolorum enim? Nisi,
-      error. Optio, illum quas nisi debitis eligendi suscipit expedita,
-      necessitatibus aut laudantium ut excepturi odio reiciendis. Eveniet,
-      fugiat repellendus?
-    </p>
-    <p>{{ data }}</p>
+  <div class="animes">
+    <h1>Anime List</h1>
+    <div class="anime-list">
+      <div v-for="anime in animes.results" :key="anime" class="anime-card">
+        <a href="#">
+          <img v-bind:src="anime.image_url" alt="" />
+        </a>
+        <ul>
+          <li>
+            <p>{{ anime.title }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "Home",
+ 
   data() {
     return {
-      data: [],
+      animes: [],
     };
   },
   mounted() {
     const headers = { Accept: "application/json" };
-    fetch(process.env.VUE_APP_API_URL, { headers })
+    let page = this.$route.query.page
+    fetch(
+      process.env.VUE_APP_API_URL + "v3/search/anime?order_by=title&sort=asc&page=" + page,
+      { headers }
+    )
       .then((res) => res.json())
-      .then((data) => (this.data = data))
+      .then((animes) => (this.animes = animes))
       .catch((err) => console.log(err.message));
-    console.log(process.env.VUE_APP_API_URL);
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: $black;
+.animes {
+  .anime-list {
+    display: flex;
+    flex-wrap: wrap;
+    .anime-card {
+      padding: 10px;
+      max-width: 250px;
+      a {
+        img {
+          width: 250px;
+          height: 321px;
+          vertical-align: middle;
+          max-height: 321px;
+          object-fit: cover;
+        }
+      }
+      ul {
+        margin-top: 10px;
+        li {
+          list-style-type: none;
+        }
+      }
+      p {
+        text-align: center;
+      }
+    }
+  }
 }
 </style>
